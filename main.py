@@ -1,70 +1,75 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import numpy_financial as npf
 import plotly.express as px
+import plotly.graph_objects as go
+import numpy_financial as npf
 from fpdf import FPDF
-import base64
+import tempfile
+import os
 
-# Set page config
+# Page configuration
 st.set_page_config(
     page_title="Property Development Feasibility Calculator",
-    page_icon="🏢",
-    layout="wide"
+    page_icon="🏗️",
+    layout="wide",
+    menu_items={
+        'Get Help': 'mailto:rodc31@gmail.com',
+        'Report a bug': 'mailto:rodc31@gmail.com',
+        'About': 'Property Development Feasibility Calculator helps real estate professionals evaluate development projects and make informed investment decisions.'
+    }
 )
 
-# Simple version without authentication for immediate testing
-st.title("🏢 Property Development Feasibility Calculator")
-st.markdown("Analyze the profitability of your property development projects")
-
-# Input section
-st.header("📊 Project Details")
+st.title("🏗️ Property Development Feasibility Calculator")
+st.markdown("""
+This calculator helps property developers evaluate the feasibility of development projects
+by calculating key financial metrics based on input parameters.
+""")
 
 # Create two columns for inputs
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("Site Information")
-    property_address = st.text_input("Property Address", placeholder="123 Main Street, City, State")
+    st.subheader("📍 Site Information")
+    property_address = st.text_input("Property Address", value="123 Main Street, City, State")
     site_price = st.number_input("Site Purchase Price ($)", min_value=0, value=500000, step=10000)
     gfa = st.number_input("Gross Floor Area - GFA (sqm)", min_value=0, value=200, step=10)
     nsa = st.number_input("Net Sellable Area - NSA (sqm)", min_value=0, value=180, step=10)
     
-    st.subheader("Development Details")
+    st.subheader("🏗️ Development Details")
     num_dwellings = st.number_input("Number of Dwellings", min_value=1, value=2, step=1)
     expected_revenue = st.number_input("Expected Revenue ($)", min_value=0, value=1200000, step=10000)
     
-    st.subheader("Construction Costs")
+    st.subheader("🔨 Construction Costs")
     construction_cost_per_gfa = st.number_input("Construction Cost per GFA ($/sqm)", min_value=0, value=2500, step=50)
     demolition_cost = st.number_input("Demolition Cost ($)", min_value=0, value=20000, step=1000)
     
-    st.subheader("Additional Costs")
+    st.subheader("💼 Additional Costs")
     consultant_costs = st.number_input("Consultant & Approval Costs ($)", min_value=0, value=50000, step=1000)
     marketing_costs = st.number_input("Marketing Costs ($)", min_value=0, value=15000, step=1000)
-    
-    st.subheader("Finance & Time")
-    interest_rate = st.number_input("Interest Rate (%)", min_value=0.0, value=6.5, step=0.1) / 100
-    development_period = st.number_input("Development Period (months)", min_value=1, value=18, step=1)
-    contingency_rate = st.number_input("Contingency Rate (%)", min_value=0.0, value=5.0, step=0.1) / 100
-    
+
 with col2:
-    st.subheader("Professional Fees")
+    st.subheader("⚖️ Professional Fees")
     legal_fees = st.number_input("Legal Fees ($)", min_value=0, value=8000, step=1000)
     statutory_fees = st.number_input("Statutory Fees ($)", min_value=0, value=5000, step=1000)
     council_fees = st.number_input("Council Fees ($)", min_value=0, value=15000, step=1000)
     professional_fees = st.number_input("Professional Fees ($)", min_value=0, value=25000, step=1000)
     
-    st.subheader("Sales & Transaction Costs")
+    st.subheader("💰 Sales & Transaction Costs")
     agents_commission_rate = st.number_input("Agents Commission Rate (%)", min_value=0.0, value=2.5, step=0.1) / 100
     stamp_duty_rate = st.number_input("Stamp Duty Rate (%)", min_value=0.0, value=5.5, step=0.1) / 100
     gst_rate = st.number_input("GST Rate (%)", min_value=0.0, value=10.0, step=0.1) / 100
     solicitor_fees = st.number_input("Solicitor Fees ($)", min_value=0, value=3000, step=500)
     
-    st.subheader("Target Returns")
+    st.subheader("🎯 Target Returns")
     target_profit_margin = st.number_input("Target Profit Margin (%)", min_value=0.0, value=20.0, step=1.0) / 100
     minimum_roe = st.number_input("Minimum ROE Target (%)", min_value=0.0, value=15.0, step=1.0) / 100
     
-    st.subheader("Other Costs")
+    st.subheader("📊 Finance & Time")
+    interest_rate = st.number_input("Interest Rate (%)", min_value=0.0, value=6.5, step=0.1) / 100
+    development_period = st.number_input("Development Period (months)", min_value=1, value=18, step=1)
+    contingency_rate = st.number_input("Contingency Rate (%)", min_value=0.0, value=5.0, step=0.1) / 100
+    
+    st.subheader("🔧 Other Costs")
     insurance_costs = st.number_input("Insurance Costs ($)", min_value=0, value=5000, step=500)
     utilities_connection = st.number_input("Utilities Connection ($)", min_value=0, value=8000, step=1000)
 
@@ -152,11 +157,10 @@ cost_data = {
 cost_df = pd.DataFrame(cost_data)
 cost_df = cost_df.sort_values('Cost', ascending=True)
 
-# Create cost breakdown chart
-fig = px.bar(cost_df, x='Cost', y='Item', orientation='h',
-             title='Cost Breakdown', 
-             labels={'Cost': 'Amount ($)', 'Item': 'Cost Category'})
-fig.update_layout(height=400)
+# Display cost breakdown chart
+fig = px.bar(cost_df, x='Cost', y='Item', orientation='h', 
+             title="Cost Breakdown by Category")
+fig.update_layout(height=600)
 st.plotly_chart(fig, use_container_width=True)
 
 # Metrics table
@@ -164,7 +168,7 @@ st.header("📋 Project Metrics")
 
 metrics_data = {
     'Metric': [
-        'Site Purchase Price', 'Gross Floor Area (GFA)', 'Net Sellable Area (NSA)',
+        'Site Address', 'Site Purchase Price', 'Gross Floor Area (GFA)', 'Net Sellable Area (NSA)',
         'Number of Dwellings', 'Average Dwelling Size', 'Price per Dwelling',
         'Construction Cost per GFA', 'Land Cost per GFA', 'Total Build Cost',
         'Demolition Cost', 'Consultant & Approval Costs', 'Marketing Costs',
@@ -175,7 +179,7 @@ metrics_data = {
         'Target Profit Margin', 'Minimum ROE Target', 'Equity Required', 'Return on Equity (ROE)', 'Internal Rate of Return (IRR)'
     ],
     'Value': [
-        f"${site_price:,.0f}", f"{gfa:,.0f} sqm", f"{nsa:,.0f} sqm",
+        f"{property_address}", f"${site_price:,.0f}", f"{gfa:,.0f} sqm", f"{nsa:,.0f} sqm",
         f"{num_dwellings}", f"{avg_dwelling_size:.1f} sqm", f"${price_per_dwelling:,.0f}",
         f"${construction_cost_per_gfa:,.0f}/sqm", f"${land_cost_per_gfa:,.0f}/sqm",
         f"${total_build_cost:,.0f}", f"${demolition_cost:,.0f}", f"${consultant_costs:,.0f}",
@@ -191,27 +195,31 @@ metrics_data = {
 metrics_df = pd.DataFrame(metrics_data)
 st.dataframe(metrics_df, use_container_width=True, hide_index=True)
 
-# PDF Export (simplified without authentication)
-st.header("📄 Export Report")
-
+# PDF Report Generation
 def create_pdf_report():
-    pdf = FPDF()
+    class PDF(FPDF):
+        def header(self):
+            self.set_font('Arial', 'B', 15)
+            self.cell(0, 10, 'Property Development Feasibility Report', 0, 1, 'C')
+            self.ln(10)
+
+        def footer(self):
+            self.set_y(-15)
+            self.set_font('Arial', 'I', 8)
+            self.cell(0, 10, f'Page {self.page_no()}', 0, 0, 'C')
+
+    pdf = PDF()
     pdf.add_page()
-    pdf.set_font("Arial", "B", 16)
-    pdf.cell(0, 10, "Property Development Feasibility Report", 0, 1, "C")
     
-    # Add property address if provided
-    if property_address:
-        pdf.ln(5)
-        pdf.set_font("Arial", "B", 12)
-        pdf.cell(0, 8, f"Property: {property_address}", 0, 1, "C")
-    
-    pdf.ln(8)
-    
-    # Add key metrics
+    # Project overview
     pdf.set_font("Arial", "B", 12)
-    pdf.cell(0, 8, "Financial Summary:", 0, 1)
-    pdf.ln(2)
+    pdf.cell(0, 8, f"Project: {property_address}", 0, 1)
+    pdf.ln(5)
+    
+    # Key metrics
+    pdf.set_font("Arial", "B", 11)
+    pdf.cell(0, 8, "Key Financial Metrics", 0, 1)
+    pdf.set_font("Arial", "", 10)
     
     key_metrics = [
         ("Expected Revenue", f"${expected_revenue:,.0f}"),
@@ -225,37 +233,25 @@ def create_pdf_report():
     
     for metric, value in key_metrics:
         pdf.set_font("Arial", "", 10)
-        pdf.cell(0, 6, f"{metric}: {value}", 0, 1)
+        pdf.cell(80, 6, metric, 0, 0)
+        pdf.set_font("Arial", "B", 10)
+        pdf.cell(0, 6, value, 0, 1)
     
-    pdf.ln(8)
-    pdf.set_font("Arial", "I", 8)
-    pdf.cell(0, 6, "Generated by Property Development Feasibility Calculator", 0, 0, "C")
-    
-    # Generate the PDF as bytes for download
-    pdf_output = pdf.output(dest='S')
-    if isinstance(pdf_output, str):
-        pdf_bytes = pdf_output.encode('latin-1')
-    else:
-        pdf_bytes = pdf_output
-    pdf_data = base64.b64encode(pdf_bytes).decode('utf-8')
-    
-    return pdf_data
+    return pdf.output(dest='S').encode('latin-1')
 
-try:
-    pdf_report = create_pdf_report()
-    
-    # Add a download button
-    if st.button("Generate & Download PDF Report"):
+st.header("📄 Export Report")
+if st.button("Generate PDF Report"):
+    try:
+        pdf_bytes = create_pdf_report()
         st.download_button(
-            label="Click to Download Report",
-            data=base64.b64decode(pdf_report),
-            file_name="property_feasibility_report.pdf",
+            label="Download PDF Report",
+            data=pdf_bytes,
+            file_name=f"feasibility_report_{property_address.replace(' ', '_')}.pdf",
             mime="application/pdf"
         )
         st.success("PDF report generated successfully!")
-        
-except Exception as e:
-    st.error(f"Error generating PDF: {str(e)}")
+    except Exception as e:
+        st.error(f"Error generating PDF: {str(e)}")
 
 # Key Insights
 st.markdown("---")
@@ -272,3 +268,14 @@ elif roe > 10:
     st.info(f"Good return on equity of {roe:.1f}%")
 else:
     st.warning(f"Low return on equity of {roe:.1f}%")
+
+# Performance against targets
+if profit_margin >= target_profit_margin * 100:
+    st.success(f"✅ Profit margin of {profit_margin:.1f}% meets target of {target_profit_margin*100:.1f}%")
+else:
+    st.warning(f"⚠️ Profit margin of {profit_margin:.1f}% below target of {target_profit_margin*100:.1f}%")
+
+if roe >= minimum_roe * 100:
+    st.success(f"✅ ROE of {roe:.1f}% meets minimum target of {minimum_roe*100:.1f}%")
+else:
+    st.warning(f"⚠️ ROE of {roe:.1f}% below minimum target of {minimum_roe*100:.1f}%")
