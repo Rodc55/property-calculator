@@ -38,7 +38,7 @@ with col1:
     
     st.subheader("🏗️ Development Details")
     num_dwellings = st.number_input("Number of Dwellings", min_value=1, value=2, step=1)
-    expected_revenue = st.number_input("Expected Revenue ($)", min_value=0, value=1200000, step=10000)
+    sales_rate_per_sqm = st.number_input("Sales Rate per sqm ($)", min_value=0, value=2800, step=50)
     
     st.subheader("🔨 Construction Costs")
     construction_cost_per_gfa = st.number_input("Construction Cost per GFA ($/sqm)", min_value=0, value=2500, step=50)
@@ -78,6 +78,9 @@ with col2:
 gfa = site_size * fsr
 nsa = gfa * (nsa_ratio / 100)
 total_build_cost = construction_cost_per_gfa * gfa
+
+# Calculate expected revenue from sales rate and NSA
+expected_revenue = nsa * sales_rate_per_sqm
 
 # Calculate dwelling and cost metrics
 avg_dwelling_size = nsa / num_dwellings if num_dwellings > 0 else 0
@@ -170,10 +173,11 @@ st.header("📋 Project Metrics")
 
 metrics_data = {
     'Metric': [
-        'Site Address', 'Site Purchase Price', 'Gross Floor Area (GFA)', 'Net Sellable Area (NSA)',
-        'Number of Dwellings', 'Average Dwelling Size', 'Price per Dwelling',
-        'Construction Cost per GFA', 'Land Cost per GFA', 'Total Build Cost',
-        'Demolition Cost', 'Consultant & Approval Costs', 'Marketing Costs',
+        'Site Address', 'Site Purchase Price', 'Site Size', 'Floor Space Ratio (FSR)',
+        'Gross Floor Area (GFA)', 'Net Sellable Area (NSA)', 'NSA Ratio',
+        'Number of Dwellings', 'Average Dwelling Size', 'Sales Rate per sqm',
+        'Price per Dwelling', 'Construction Cost per GFA', 'Land Cost per GFA',
+        'Total Build Cost', 'Demolition Cost', 'Consultant & Approval Costs', 'Marketing Costs',
         'Agents Fees', 'Stamp Duty', 'GST on Sales', 'Council Fees', 'Statutory Fees',
         'Legal Fees', 'Professional Fees', 'Solicitor Fees', 'Insurance Costs', 'Utilities Connection',
         'Contingency Costs', 'Land Holding Costs', 'Finance Cost (Interest)',
@@ -181,9 +185,10 @@ metrics_data = {
         'Target Profit Margin', 'Minimum ROE Target', 'Equity Required', 'Return on Equity (ROE)', 'Internal Rate of Return (IRR)'
     ],
     'Value': [
-        f"{property_address}", f"${site_price:,.0f}", f"{gfa:,.0f} sqm", f"{nsa:,.0f} sqm",
-        f"{num_dwellings}", f"{avg_dwelling_size:.1f} sqm", f"${price_per_dwelling:,.0f}",
-        f"${construction_cost_per_gfa:,.0f}/sqm", f"${land_cost_per_gfa:,.0f}/sqm",
+        f"{property_address}", f"${site_price:,.0f}", f"{site_size:,.0f} sqm", f"{fsr:.2f}",
+        f"{gfa:,.2f} sqm", f"{nsa:,.2f} sqm", f"{nsa_ratio:.1f}%",
+        f"{num_dwellings}", f"{avg_dwelling_size:.1f} sqm", f"${sales_rate_per_sqm:,.0f}/sqm",
+        f"${price_per_dwelling:,.0f}", f"${construction_cost_per_gfa:,.0f}/sqm", f"${land_cost_per_gfa:,.0f}/sqm",
         f"${total_build_cost:,.0f}", f"${demolition_cost:,.0f}", f"${consultant_costs:,.0f}",
         f"${marketing_costs:,.0f}", f"${agents_fees:,.0f}", f"${stamp_duty:,.0f}",
         f"${gst_on_sales:,.0f}", f"${council_fees:,.0f}", f"${statutory_fees:,.0f}", f"${legal_fees:,.0f}",
