@@ -388,7 +388,12 @@ with col2:
                 pdf.cell(0, 5, f"{metric}: {value}", ln=True)
         
         # Convert to bytes for download
-        pdf_data = pdf.output(dest='S').encode('latin-1')
+        pdf_output = pdf.output(dest='S')
+if isinstance(pdf_output, str):
+    pdf_bytes = pdf_output.encode('latin-1')
+else:
+    pdf_bytes = pdf_output
+pdf_data = base64.b64encode(pdf_bytes).decode('utf-8')
         return pdf_data
     
     # Create download button for PDF report
