@@ -168,39 +168,66 @@ fig = px.bar(cost_df, x='Cost', y='Item', orientation='h', title="Cost Breakdown
 fig.update_layout(height=600)
 st.plotly_chart(fig, use_container_width=True)
 
-# Metrics table
+# Project Metrics in 4 columns
 st.header("📋 Project Metrics")
 
-metrics_data = {
-    'Metric': [
-        'Site Address', 'Site Purchase Price', 'Site Size', 'Floor Space Ratio (FSR)',
-        'Gross Floor Area (GFA)', 'Net Sellable Area (NSA)', 'NSA Ratio',
-        'Number of Dwellings', 'Average Dwelling Size', 'Sales Rate per sqm',
-        'Price per Dwelling', 'Construction Cost per GFA', 'Land Cost per GFA',
-        'Total Build Cost', 'Demolition Cost', 'Consultant & Approval Costs', 'Marketing Costs',
-        'Agents Fees', 'Stamp Duty', 'GST on Sales', 'Council Fees', 'Statutory Fees',
-        'Legal Fees', 'Professional Fees', 'Solicitor Fees', 'Insurance Costs', 'Utilities Connection',
-        'Contingency Costs', 'Land Holding Costs', 'Finance Cost (Interest)',
-        'Total Costs', 'Expected Revenue', 'Profit', 'Profit Margin',
-        'Target Profit Margin', 'Minimum ROE Target', 'Equity Required', 'Return on Equity (ROE)', 'Internal Rate of Return (IRR)'
-    ],
-    'Value': [
-        f"{property_address}", f"${site_price:,.0f}", f"{site_size:,.0f} sqm", f"{fsr:.2f}",
-        f"{gfa:,.2f} sqm", f"{nsa:,.2f} sqm", f"{nsa_ratio:.1f}%",
-        f"{num_dwellings}", f"{avg_dwelling_size:.1f} sqm", f"${sales_rate_per_sqm:,.0f}/sqm",
-        f"${price_per_dwelling:,.0f}", f"${construction_cost_per_gfa:,.0f}/sqm", f"${land_cost_per_gfa:,.0f}/sqm",
-        f"${total_build_cost:,.0f}", f"${demolition_cost:,.0f}", f"${consultant_costs:,.0f}",
-        f"${marketing_costs:,.0f}", f"${agents_fees:,.0f}", f"${stamp_duty:,.0f}",
-        f"${gst_on_sales:,.0f}", f"${council_fees:,.0f}", f"${statutory_fees:,.0f}", f"${legal_fees:,.0f}",
-        f"${professional_fees:,.0f}", f"${solicitor_fees:,.0f}", f"${insurance_costs:,.0f}", f"${utilities_connection:,.0f}",
-        f"${contingency_costs:,.0f}", f"${land_holding_costs:,.0f}", f"${finance_cost:,.0f}",
-        f"${total_costs:,.0f}", f"${expected_revenue:,.0f}", f"${profit:,.0f}",
-        f"{profit_margin:.1f}%", f"{target_profit_margin*100:.1f}%", f"{minimum_roe*100:.1f}%", f"${equity_required:,.0f}", f"{roe:.1f}%", f"{irr:.1f}%"
-    ]
-}
+# Create 4 columns for metrics display
+col1, col2, col3, col4 = st.columns(4)
 
-metrics_df = pd.DataFrame(metrics_data)
-st.dataframe(metrics_df, use_container_width=True, hide_index=True)
+# Define all metrics and values
+all_metrics = [
+    ('Site Address', f"{property_address}"),
+    ('Site Purchase Price', f"${site_price:,.0f}"),
+    ('Site Size', f"{site_size:,.0f} sqm"),
+    ('Floor Space Ratio (FSR)', f"{fsr:.2f}"),
+    ('Gross Floor Area (GFA)', f"{gfa:,.2f} sqm"),
+    ('Net Sellable Area (NSA)', f"{nsa:,.2f} sqm"),
+    ('NSA Ratio', f"{nsa_ratio:.1f}%"),
+    ('Number of Dwellings', f"{num_dwellings}"),
+    ('Average Dwelling Size', f"{avg_dwelling_size:.1f} sqm"),
+    ('Sales Rate per sqm', f"${sales_rate_per_sqm:,.0f}/sqm"),
+    ('Price per Dwelling', f"${price_per_dwelling:,.0f}"),
+    ('Construction Cost per GFA', f"${construction_cost_per_gfa:,.0f}/sqm"),
+    ('Land Cost per GFA', f"${land_cost_per_gfa:,.0f}/sqm"),
+    ('Total Build Cost', f"${total_build_cost:,.0f}"),
+    ('Demolition Cost', f"${demolition_cost:,.0f}"),
+    ('Consultant & Approval Costs', f"${consultant_costs:,.0f}"),
+    ('Marketing Costs', f"${marketing_costs:,.0f}"),
+    ('Agents Fees', f"${agents_fees:,.0f}"),
+    ('Stamp Duty', f"${stamp_duty:,.0f}"),
+    ('GST on Sales', f"${gst_on_sales:,.0f}"),
+    ('Council Fees', f"${council_fees:,.0f}"),
+    ('Statutory Fees', f"${statutory_fees:,.0f}"),
+    ('Legal Fees', f"${legal_fees:,.0f}"),
+    ('Professional Fees', f"${professional_fees:,.0f}"),
+    ('Solicitor Fees', f"${solicitor_fees:,.0f}"),
+    ('Insurance Costs', f"${insurance_costs:,.0f}"),
+    ('Utilities Connection', f"${utilities_connection:,.0f}"),
+    ('Contingency Costs', f"${contingency_costs:,.0f}"),
+    ('Land Holding Costs', f"${land_holding_costs:,.0f}"),
+    ('Finance Cost (Interest)', f"${finance_cost:,.0f}"),
+    ('Total Costs', f"${total_costs:,.0f}"),
+    ('Expected Revenue', f"${expected_revenue:,.0f}"),
+    ('Profit', f"${profit:,.0f}"),
+    ('Profit Margin', f"{profit_margin:.1f}%"),
+    ('Target Profit Margin', f"{target_profit_margin*100:.1f}%"),
+    ('Minimum ROE Target', f"{minimum_roe*100:.1f}%"),
+    ('Equity Required', f"${equity_required:,.0f}"),
+    ('Return on Equity (ROE)', f"{roe:.1f}%"),
+    ('Internal Rate of Return (IRR)', f"{irr:.1f}%")
+]
+
+# Split metrics into 4 columns
+metrics_per_col = len(all_metrics) // 4 + (1 if len(all_metrics) % 4 else 0)
+
+columns = [col1, col2, col3, col4]
+for col_idx, col in enumerate(columns):
+    start_idx = col_idx * metrics_per_col
+    end_idx = min(start_idx + metrics_per_col, len(all_metrics))
+    
+    with col:
+        for metric, value in all_metrics[start_idx:end_idx]:
+            st.write(f"**{metric}**: {value}")
 
 # PDF Report Generation
 def create_pdf_report():
