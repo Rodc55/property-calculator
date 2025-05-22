@@ -1,7 +1,0 @@
-streamlit==1.36.0
-fpdf==1.7.2
-numpy==1.26.4
-numpy-financial==1.0.0
-pandas==2.2.1
-plotly==5.20.0
-sendgrid==6.10.0
