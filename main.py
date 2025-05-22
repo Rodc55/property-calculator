@@ -226,16 +226,23 @@ try:
             file_name="property_feasibility_report.pdf",
             mime="application/pdf"
         )
-        st.success("✅ PDF report generated successfully!")
+        st.success("PDF report generated successfully!")
         
 except Exception as e:
     st.error(f"Error generating PDF: {str(e)}")
 
 # Key Insights
 st.markdown("---")
-st.markdown("### 💡 Key Insights")
+st.markdown("### Key Insights")
 
 if profit > 0:
-    st.success(f"✅ This project shows a profit of ${profit:,.0f} with a {profit_margin:.1f}% margin")
+    st.success(f"This project shows a profit of ${profit:,.0f} with a {profit_margin:.1f}% margin")
 else:
-    st.error(f"❌
+    st.error(f"This project shows a loss of ${abs(profit):,.0f}")
+
+if roe > 15:
+    st.success(f"Excellent return on equity of {roe:.1f}%")
+elif roe > 10:
+    st.info(f"Good return on equity of {roe:.1f}%")
+else:
+    st.warning(f"Low return on equity of {roe:.1f}%")
