@@ -4,4 +4,3 @@ numpy
 numpy-financial
 plotly
 fpdf2
-sendgrid
