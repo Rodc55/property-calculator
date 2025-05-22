@@ -73,20 +73,10 @@ def send_welcome_email(user_email, user_name, password):
         print(f"Email error: {e}")
         return False
 
-# Database setup and management
 def init_auth_db():
     """Initialize the authentication database"""
     conn = sqlite3.connect('property_calculator_auth.db')
     c = conn.cursor()
-    
-    # Check if pdf_exports_count column exists
-    try:
-        c.execute("SELECT pdf_exports_count FROM users LIMIT 1")
-    except sqlite3.OperationalError:
-        # Add the new columns if they don't exist
-        c.execute("ALTER TABLE users ADD COLUMN pdf_exports_count INTEGER DEFAULT 0")
-        c.execute("ALTER TABLE users ADD COLUMN pdf_exports_reset_date DATE")
-        conn.commit()
     
     # Create users table if it doesn't exist
     c.execute('''
