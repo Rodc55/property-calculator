@@ -3,48 +3,17 @@ import pandas as pd
 import numpy as np
 import numpy_financial as npf
 import plotly.express as px
-import plotly.graph_objects as go
 from fpdf import FPDF
 import base64
-import auth
 
 # Set page config
 st.set_page_config(
     page_title="Property Development Feasibility Calculator",
     page_icon="🏢",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
-# Initialize authentication database
-auth.init_auth_db()
-
-# Check if user is logged in
-if 'session_id' not in st.session_state:
-    st.session_state.session_id = None
-
-if st.session_state.session_id:
-    user = auth.get_user_from_session(st.session_state.session_id)
-    if not user:
-        st.session_state.session_id = None
-        st.rerun()
-else:
-    user = None
-
-# Show authentication page if not logged in
-if not user:
-    auth.auth_page()
-    st.stop()
-
-# Display user info and logout in sidebar
-with st.sidebar:
-    auth.user_info_section()
-    
-    if st.button("Logout", type="secondary"):
-        auth.logout()
-        st.rerun()
-
-# Main app title
+# Simple version without authentication for immediate testing
 st.title("🏢 Property Development Feasibility Calculator")
 st.markdown("Analyze the profitability of your property development projects")
 
@@ -110,7 +79,6 @@ roe = (profit / equity_required * 100) if equity_required > 0 else 0
 
 # IRR calculation (simplified)
 cash_flows = [-equity_required]  # Initial investment
-monthly_rate = interest_rate / 12
 for month in range(development_period):
     if month < development_period - 1:
         cash_flows.append(0)  # No cash flow during development
@@ -197,176 +165,16 @@ metrics_data = {
 metrics_df = pd.DataFrame(metrics_data)
 st.dataframe(metrics_df, use_container_width=True, hide_index=True)
 
-# PDF Export
+# PDF Export (simplified without authentication)
 st.header("📄 Export Report")
 
-# Check access level for PDF export
-access_level = auth.check_access_level()
-
-if access_level == "free":
-    st.info("🔒 PDF export is available for Basic and Pro subscribers. Please upgrade your subscription to access this feature.")
-    if st.button("Upgrade Subscription", type="primary"):
-        st.switch_page("pages/subscription.py")
-else:
-    # Check PDF export limits
-    can_export, exports_used, exports_limit = auth.check_pdf_export_limit(user)
+def create_pdf_report():
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", "B", 16)
+    pdf.cell(0, 10, "Property Development Feasibility Report", 0, 1, "C")
     
-    if access_level == "basic":
-        st.info(f"📊 PDF Exports Used: {exports_used}/{exports_limit} this month")
-        
-        # Show progress bar
-        progress = exports_used / exports_limit if exports_limit > 0 else 0
-        st.progress(progress)
-        
-        if not can_export:
-            st.warning("🚫 You've reached your monthly PDF export limit. Upgrade to Pro for unlimited exports!")
-            if st.button("Upgrade to Pro", type="primary"):
-                st.switch_page("pages/subscription.py")
-    
-    if can_export or access_level == "pro" or access_level == "admin":
-        def create_pdf_report():
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", "B", 16)
-            pdf.cell(0, 10, "Property Development Feasibility Report", 0, 1, "C")
-            
-            # Add property address if provided
-            if property_address:
-                pdf.ln(5)
-                pdf.set_font("Arial", "B", 12)
-                pdf.cell(0, 8, f"Property: {property_address}", 0, 1, "C")
-            
-            pdf.ln(8)
-            
-            # Create metrics list for PDF
-            metrics_list = list(zip(metrics_df['Metric'], metrics_df['Value']))
-            
-            # First group: Site and building details
-            site_metrics = ["Site Purchase Price", "Gross Floor Area (GFA)", "Net Sellable Area (NSA)", 
-                           "Number of Dwellings", "Average Dwelling Size", "Price per Dwelling",
-                           "Construction Cost per GFA", "Land Cost per GFA"]
-            
-            # Second group: Costs
-            cost_metrics = ["Total Build Cost", "Demolition Cost", "Consultant & Approval Costs",
-                            "Marketing Costs", "Agents Fees", "Stamp Duty", "GST on Sales", "Statutory Fees", 
-                            "Legal Fees", "Land Holding Costs", "Finance Cost (Interest)", "Total Costs"]
-            
-            # Third group: Profitability
-            profit_metrics = ["Expected Revenue", "Profit", "Profit Margin", 
-                             "Equity Required", "Return on Equity (ROE)", "Internal Rate of Return (IRR)"]
-            
-            # Create 2-column layout for each section
-            col_width = 90
-            
-            # Add site metrics in two columns
-            for i in range(0, len(site_metrics), 2):
-                pdf.set_font("Arial", "B", 10)
-                if i == 0:
-                    pdf.cell(0, 8, "Site & Building Details:", 0, 1)
-                    pdf.ln(2)
-                
-                # Find metrics in the list
-                left_metric = next((item for item in metrics_list if item[0] == site_metrics[i]), None)
-                right_metric = next((item for item in metrics_list if i+1 < len(site_metrics) and item[0] == site_metrics[i+1]), None)
-                
-                if left_metric:
-                    pdf.set_font("Arial", "", 9)
-                    pdf.cell(col_width, 5, f"{left_metric[0]}: {left_metric[1]}", 0, 0)
-                
-                if right_metric:
-                    pdf.set_font("Arial", "", 9)
-                    pdf.cell(col_width, 5, f"{right_metric[0]}: {right_metric[1]}", 0, 1)
-                else:
-                    pdf.ln(5)
-            
-            pdf.ln(5)
-            
-            # Add cost metrics
-            for i in range(0, len(cost_metrics), 2):
-                pdf.set_font("Arial", "B", 10)
-                if i == 0:
-                    pdf.cell(0, 8, "Cost Breakdown:", 0, 1)
-                    pdf.ln(2)
-                
-                left_metric = next((item for item in metrics_list if item[0] == cost_metrics[i]), None)
-                right_metric = next((item for item in metrics_list if i+1 < len(cost_metrics) and item[0] == cost_metrics[i+1]), None)
-                
-                if left_metric:
-                    pdf.set_font("Arial", "", 9)
-                    pdf.cell(col_width, 5, f"{left_metric[0]}: {left_metric[1]}", 0, 0)
-                
-                if right_metric:
-                    pdf.set_font("Arial", "", 9)
-                    pdf.cell(col_width, 5, f"{right_metric[0]}: {right_metric[1]}", 0, 1)
-                else:
-                    pdf.ln(5)
-            
-            pdf.ln(5)
-            
-            # Add profit metrics with emphasis
-            pdf.set_font("Arial", "B", 10)
-            pdf.cell(0, 8, "Revenue and Profitability:", 0, 1)
-            pdf.ln(2)
-            
-            for metric in profit_metrics:
-                metric_data = next((item for item in metrics_list if item[0] == metric), None)
-                if metric_data:
-                    if metric in ["Expected Revenue", "Profit", "Equity Required"]:
-                        pdf.set_font("Arial", "B", 9)
-                    else:
-                        pdf.set_font("Arial", "", 9)
-                    pdf.cell(0, 5, f"{metric_data[0]}: {metric_data[1]}", 0, 1, ln=True)
-            
-            pdf.ln(8)
-            pdf.set_font("Arial", "I", 8)
-            pdf.cell(0, 6, "Generated by Property Development Feasibility Calculator", 0, 0, "C")
-            
-            # Generate the PDF as bytes for download
-            pdf_output = pdf.output(dest='S')
-            if isinstance(pdf_output, str):
-                pdf_bytes = pdf_output.encode('latin-1')
-            else:
-                pdf_bytes = pdf_output
-            pdf_data = base64.b64encode(pdf_bytes).decode('utf-8')
-            
-            return pdf_data
-
-        try:
-            pdf_report = create_pdf_report()
-            
-            # Create download button for PDF report
-            pdf_download = f'<a href="data:application/pdf;base64,{pdf_report}" download="property_feasibility_report.pdf">Download PDF Report</a>'
-            st.markdown(pdf_download, unsafe_allow_html=True)
-            
-            # Add a cleaner button-style download option
-            if st.button("Generate & Download PDF Report"):
-                # Increment PDF export count for basic users
-                if access_level == "basic":
-                    auth.increment_pdf_export_count(user.id)
-                
-                st.download_button(
-                    label="Click to Download Report",
-                    data=base64.b64decode(pdf_report),
-                    file_name="property_feasibility_report.pdf",
-                    mime="application/pdf"
-                )
-                st.success("✅ PDF report generated successfully!")
-                
-        except Exception as e:
-            st.error(f"Error generating PDF: {str(e)}")
-
-# Create a clear separation after the inputs and results
-st.markdown("---")
-st.markdown("### 💡 Key Insights")
-
-if profit > 0:
-    st.success(f"✅ This project shows a profit of ${profit:,.0f} with a {profit_margin:.1f}% margin")
-else:
-    st.error(f"❌ This project shows a loss of ${abs(profit):,.0f}")
-
-if roe > 15:
-    st.success(f"✅ Excellent return on equity of {roe:.1f}%")
-elif roe > 10:
-    st.info(f"💡 Good return on equity of {roe:.1f}%")
-else:
-    st.warning(f"⚠️ Low return on equity of {roe:.1f}%")
+    # Add property address if provided
+    if property_address:
+        pdf.ln(5)
+        pdf.
