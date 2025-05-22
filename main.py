@@ -170,8 +170,7 @@ st.header("📋 Project Metrics")
 
 metrics_data = {
     'Metric': [
-        'Site Address', 'Site Purchase Price', 'Site Size', 'Floor Space Ratio (FSR)',
-        'Gross Floor Area (GFA)', 'Net Sellable Area (NSA)', 'NSA Ratio',
+        'Site Address', 'Site Purchase Price', 'Gross Floor Area (GFA)', 'Net Sellable Area (NSA)',
         'Number of Dwellings', 'Average Dwelling Size', 'Price per Dwelling',
         'Construction Cost per GFA', 'Land Cost per GFA', 'Total Build Cost',
         'Demolition Cost', 'Consultant & Approval Costs', 'Marketing Costs',
@@ -182,8 +181,7 @@ metrics_data = {
         'Target Profit Margin', 'Minimum ROE Target', 'Equity Required', 'Return on Equity (ROE)', 'Internal Rate of Return (IRR)'
     ],
     'Value': [
-        f"{property_address}", f"${site_price:,.0f}", f"{site_size:,.0f} sqm", f"{fsr:.2f}",
-        f"{gfa:,.2f} sqm", f"{nsa:,.2f} sqm", f"{nsa_ratio:.1f}%",
+        f"{property_address}", f"${site_price:,.0f}", f"{gfa:,.0f} sqm", f"{nsa:,.0f} sqm",
         f"{num_dwellings}", f"{avg_dwelling_size:.1f} sqm", f"${price_per_dwelling:,.0f}",
         f"${construction_cost_per_gfa:,.0f}/sqm", f"${land_cost_per_gfa:,.0f}/sqm",
         f"${total_build_cost:,.0f}", f"${demolition_cost:,.0f}", f"${consultant_costs:,.0f}",
