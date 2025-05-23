@@ -142,27 +142,6 @@ with col4:
     st.metric("Number of Dwellings", f"{num_dwellings}")
     st.metric("Price per Dwelling", f"${price_per_dwelling:,.0f}")
 
-# Detailed breakdown
-st.header("💰 Cost Breakdown")
-
-cost_data = {
-    'Item': ['Site Purchase', 'Construction', 'Demolition', 'Consultants', 'Marketing', 
-             'Agents Fees', 'Stamp Duty', 'GST on Sales', 'Council Fees', 'Statutory Fees', 
-             'Legal Fees', 'Professional Fees', 'Solicitor Fees', 'Insurance', 'Utilities',
-             'Land Holding', 'Finance Cost', 'Contingency'],
-    'Cost': [site_price, total_build_cost, demolition_cost, consultant_costs, marketing_costs,
-             agents_fees, stamp_duty, gst_on_sales, council_fees, statutory_fees, legal_fees,
-             professional_fees, solicitor_fees, insurance_costs, utilities_connection,
-             land_holding_costs, finance_cost, contingency_costs]
-}
-
-cost_df = pd.DataFrame(cost_data)
-cost_df = cost_df.sort_values('Cost', ascending=True)
-
-fig = px.bar(cost_df, x='Cost', y='Item', orientation='h', title="Cost Breakdown by Category")
-fig.update_layout(height=600)
-st.plotly_chart(fig, use_container_width=True)
-
 # Project Metrics in 4 columns
 st.header("📋 Project Metrics")
 
@@ -223,6 +202,30 @@ for col_idx, col in enumerate(columns):
     with col:
         for metric, value in all_metrics[start_idx:end_idx]:
             st.write(f"**{metric}**: {value}")
+
+# Detailed breakdown
+st.header("💰 Cost Breakdown")
+
+# Create cost breakdown data
+cost_data = {
+    'Item': ['Site Purchase', 'Construction', 'Demolition', 'Consultants', 'Marketing', 
+             'Agents Fees', 'Stamp Duty', 'GST on Sales', 'Council Fees', 'Statutory Fees', 
+             'Legal Fees', 'Professional Fees', 'Solicitor Fees', 'Insurance', 'Utilities',
+             'Land Holding', 'Finance Cost', 'Contingency'],
+    'Cost': [site_price, total_build_cost, demolition_cost, consultant_costs, marketing_costs,
+             agents_fees, stamp_duty, gst_on_sales, council_fees, statutory_fees, legal_fees,
+             professional_fees, solicitor_fees, insurance_costs, utilities_connection,
+             land_holding_costs, finance_cost, contingency_costs]
+}
+
+cost_df = pd.DataFrame(cost_data)
+cost_df = cost_df.sort_values('Cost', ascending=True)
+
+# Display cost breakdown chart
+fig = px.bar(cost_df, x='Cost', y='Item', orientation='h', 
+             title="Cost Breakdown by Category")
+fig.update_layout(height=600)
+st.plotly_chart(fig, use_container_width=True)
 
 # PDF Report Generation
 def create_pdf_report():
