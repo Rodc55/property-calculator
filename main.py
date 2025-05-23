@@ -50,9 +50,9 @@ with st.expander("📍 Site & Development Details", expanded=True):
         fsr = st.number_input("FSR", min_value=0.0, value=0.7, step=0.1, format="%.2f")
         nsa_ratio = st.number_input("NSA %", min_value=50.0, max_value=100.0, value=85.0, step=1.0, format="%.1f")
         num_dwellings = st.number_input("Dwellings", min_value=1, value=2, step=1, format="%d")
+        sales_rate_per_sqm = st.number_input("Sales Rate ($/sqm)", min_value=0, value=2800, step=50, format="%d")
     with col3:
         st.markdown("**Costs**")
-        sales_rate_per_sqm = st.number_input("Sales Rate ($/sqm)", min_value=0, value=2800, step=50, format="%d")
         construction_cost_per_gfa = st.number_input("Construction ($/sqm)", min_value=0, value=2500, step=50, format="%d")
         construction_fees_rate = st.number_input("Construction Fees %", min_value=0.0, value=5.0, step=0.1, format="%.1f") / 100
         demolition_cost = st.number_input("Demolition ($)", min_value=0, value=20000, step=1000, format="%d")
@@ -330,4 +330,3 @@ if roe >= minimum_roe * 100:
     st.success(f"✅ ROE of {roe:.1f}% meets minimum target of {minimum_roe*100:.1f}%")
 else:
     st.warning(f"⚠️ ROE of {roe:.1f}% below minimum target of {minimum_roe*100:.1f}%")
-    
