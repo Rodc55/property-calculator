@@ -52,12 +52,12 @@ with st.expander("📍 Site & Development Details", expanded=True):
         st.markdown("**Costs**")
         sales_rate_per_sqm = st.number_input("Sales Rate ($/sqm)", min_value=0, value=2800, step=50, format="%d")
         construction_cost_per_gfa = st.number_input("Construction ($/sqm)", min_value=0, value=2500, step=50, format="%d")
+        construction_fees_rate = st.number_input("Construction Fees %", min_value=0.0, value=5.0, step=0.1, format="%.1f") / 100
         demolition_cost = st.number_input("Demolition ($)", min_value=0, value=20000, step=1000, format="%d")
     with col4:
         st.markdown("**Other Costs**")
         consultant_costs = st.number_input("Consultants ($)", min_value=0, value=50000, step=1000, format="%d")
-        marketing_costs = st.number_input("Marketing ($)", min_value=0, value=15000, step=1000, format="%d")
-        insurance_costs = st.number_input("Insurance ($)", min_value=0, value=5000, step=500, format="%d")
+        marketing_rate = st.number_input("Marketing %", min_value=0.0, value=2.0, step=0.1, format="%.1f") / 100
 
 with st.expander("💰 Fees & Financial Settings"):
     col1, col2, col3, col4 = st.columns(4)
@@ -88,6 +88,7 @@ with st.expander("💰 Fees & Financial Settings"):
 gfa = site_size * fsr
 nsa = gfa * (nsa_ratio / 100)
 total_build_cost = construction_cost_per_gfa * gfa
+construction_fees = total_build_cost * construction_fees_rate
 
 # Calculate expected revenue from sales rate and NSA
 expected_revenue = nsa * sales_rate_per_sqm
@@ -99,9 +100,10 @@ land_cost_per_gfa = site_price / gfa if gfa > 0 else 0
 
 # Calculate variable costs based on user inputs
 agents_fees = expected_revenue * agents_commission_rate
+marketing_costs = expected_revenue * marketing_rate
 stamp_duty = site_price * stamp_duty_rate
 gst_on_sales = expected_revenue * gst_rate
-contingency_costs = (site_price + total_build_cost + demolition_cost + consultant_costs + marketing_costs) * contingency_rate
+contingency_costs = (site_price + total_build_cost + construction_fees + demolition_cost + consultant_costs + marketing_costs) * contingency_rate
 
 # Calculate land holding costs (interest on site purchase)
 land_holding_costs = site_price * interest_rate * (development_period / 12)
@@ -110,10 +112,10 @@ land_holding_costs = site_price * interest_rate * (development_period / 12)
 finance_cost = total_build_cost * interest_rate * (development_period / 24)
 
 # Total costs
-total_costs = (site_price + total_build_cost + demolition_cost + consultant_costs + 
+total_costs = (site_price + total_build_cost + construction_fees + demolition_cost + consultant_costs + 
                marketing_costs + agents_fees + stamp_duty + gst_on_sales + 
                council_fees + statutory_fees + legal_fees + professional_fees +
-               solicitor_fees + insurance_costs + utilities_connection +
+               solicitor_fees + utilities_connection +
                land_holding_costs + finance_cost + contingency_costs)
 
 # Profit calculations
@@ -155,10 +157,13 @@ all_metrics = [
     ('Sales Rate per sqm', f"${sales_rate_per_sqm:,.0f}/sqm"),
     ('Price per Dwelling', f"${price_per_dwelling:,.0f}"),
     ('Construction Cost per GFA', f"${construction_cost_per_gfa:,.0f}/sqm"),
-    ('Land Cost per GFA', f"${land_cost_per_gfa:,.0f}/sqm"),
     ('Total Build Cost', f"${total_build_cost:,.0f}"),
+    ('Construction Fees', f"${construction_fees:,.0f}"),
+    ('Construction Fees Rate', f"{construction_fees_rate*100:.1f}%"),
+    ('Land Cost per GFA', f"${land_cost_per_gfa:,.0f}/sqm"),
     ('Demolition Cost', f"${demolition_cost:,.0f}"),
     ('Consultant & Approval Costs', f"${consultant_costs:,.0f}"),
+    ('Marketing Rate', f"{marketing_rate*100:.1f}%"),
     ('Marketing Costs', f"${marketing_costs:,.0f}"),
     ('Agents Fees', f"${agents_fees:,.0f}"),
     ('Stamp Duty', f"${stamp_duty:,.0f}"),
@@ -168,7 +173,6 @@ all_metrics = [
     ('Legal Fees', f"${legal_fees:,.0f}"),
     ('Professional Fees', f"${professional_fees:,.0f}"),
     ('Solicitor Fees', f"${solicitor_fees:,.0f}"),
-    ('Insurance Costs', f"${insurance_costs:,.0f}"),
     ('Utilities Connection', f"${utilities_connection:,.0f}"),
     ('Contingency Costs', f"${contingency_costs:,.0f}"),
     ('Land Holding Costs', f"${land_holding_costs:,.0f}"),
@@ -223,13 +227,13 @@ st.header("💰 Cost Breakdown")
 
 # Create cost breakdown data
 cost_data = {
-    'Item': ['Site Purchase', 'Construction', 'Demolition', 'Consultants', 'Marketing', 
+    'Item': ['Site Purchase', 'Construction Build', 'Construction Fees', 'Demolition', 'Consultants', 'Marketing', 
              'Agents Fees', 'Stamp Duty', 'GST on Sales', 'Council Fees', 'Statutory Fees', 
-             'Legal Fees', 'Professional Fees', 'Solicitor Fees', 'Insurance', 'Utilities',
+             'Legal Fees', 'Professional Fees', 'Solicitor Fees', 'Utilities',
              'Land Holding', 'Finance Cost', 'Contingency'],
-    'Cost': [site_price, total_build_cost, demolition_cost, consultant_costs, marketing_costs,
+    'Cost': [site_price, total_build_cost, construction_fees, demolition_cost, consultant_costs, marketing_costs,
              agents_fees, stamp_duty, gst_on_sales, council_fees, statutory_fees, legal_fees,
-             professional_fees, solicitor_fees, insurance_costs, utilities_connection,
+             professional_fees, solicitor_fees, utilities_connection,
              land_holding_costs, finance_cost, contingency_costs]
 }
 
