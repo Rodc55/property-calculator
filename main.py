@@ -135,28 +135,6 @@ try:
 except:
     irr = 0
 
-# Display results
-st.header("📈 Financial Analysis")
-
-# Key metrics in columns
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    st.metric("Expected Revenue", f"${expected_revenue:,.0f}")
-    st.metric("Profit", f"${profit:,.0f}", delta=f"{profit_margin:.1f}% margin")
-
-with col2:
-    st.metric("Total Costs", f"${total_costs:,.0f}")
-    st.metric("Equity Required", f"${equity_required:,.0f}")
-
-with col3:
-    st.metric("Return on Equity", f"{roe:.1f}%")
-    st.metric("Internal Rate of Return", f"{irr:.1f}%")
-
-with col4:
-    st.metric("Number of Dwellings", f"{num_dwellings}")
-    st.metric("Price per Dwelling", f"${price_per_dwelling:,.0f}")
-
 # Project Metrics in 4 columns
 st.header("📋 Project Metrics")
 
@@ -217,6 +195,28 @@ for col_idx, col in enumerate(columns):
     with col:
         for metric, value in all_metrics[start_idx:end_idx]:
             st.write(f"**{metric}**: {value}")
+
+# Display results
+st.header("📈 Financial Analysis")
+
+# Key metrics in columns
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    st.metric("Expected Revenue", f"${expected_revenue:,.0f}")
+    st.metric("Profit", f"${profit:,.0f}", delta=f"{profit_margin:.1f}% margin")
+
+with col2:
+    st.metric("Total Costs", f"${total_costs:,.0f}")
+    st.metric("Equity Required", f"${equity_required:,.0f}")
+
+with col3:
+    st.metric("Return on Equity", f"{roe:.1f}%")
+    st.metric("Internal Rate of Return", f"{irr:.1f}%")
+
+with col4:
+    st.metric("Number of Dwellings", f"{num_dwellings}")
+    st.metric("Price per Dwelling", f"${price_per_dwelling:,.0f}")
 
 # Detailed breakdown
 st.header("💰 Cost Breakdown")
