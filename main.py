@@ -21,46 +21,68 @@ st.set_page_config(
 
 st.title("🏗️ Property Development Feasibility Calculator")
 
+# Use CSS to make inputs more compact
+st.markdown("""
+<style>
+.stNumberInput > div > div > input {
+    height: 35px !important;
+    padding: 4px 8px !important;
+}
+.stTextInput > div > div > input {
+    height: 35px !important;
+    padding: 4px 8px !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # Use expandable sections to save space
 with st.expander("📍 Site & Development Details", expanded=True):
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        property_address = st.text_input("Property Address", value="123 Main Street, City, State")
-        site_price = st.number_input("Site Purchase Price ($)", min_value=0, value=500000, step=10000)
-        site_size = st.number_input("Site Size (sqm)", min_value=0, value=613, step=10)
+        st.markdown("**Site Info**")
+        property_address = st.text_input("Address", value="123 Main Street, City, State", label_visibility="collapsed", placeholder="Property Address")
+        site_price = st.number_input("Site Price ($)", min_value=0, value=500000, step=10000, format="%d")
+        site_size = st.number_input("Site Size (sqm)", min_value=0, value=613, step=10, format="%d")
     with col2:
-        fsr = st.number_input("Floor Space Ratio (FSR)", min_value=0.0, value=0.7, step=0.1)
-        nsa_ratio = st.number_input("Net Sellable Area Ratio (NSA %)", min_value=50.0, max_value=100.0, value=85.0, step=1.0)
-        num_dwellings = st.number_input("Number of Dwellings", min_value=1, value=2, step=1)
+        st.markdown("**Development**")
+        fsr = st.number_input("FSR", min_value=0.0, value=0.7, step=0.1, format="%.2f")
+        nsa_ratio = st.number_input("NSA %", min_value=50.0, max_value=100.0, value=85.0, step=1.0, format="%.1f")
+        num_dwellings = st.number_input("Dwellings", min_value=1, value=2, step=1, format="%d")
     with col3:
-        sales_rate_per_sqm = st.number_input("Sales Rate per sqm ($)", min_value=0, value=2800, step=50)
-        construction_cost_per_gfa = st.number_input("Construction Cost per GFA ($/sqm)", min_value=0, value=2500, step=50)
-        demolition_cost = st.number_input("Demolition Cost ($)", min_value=0, value=20000, step=1000)
+        st.markdown("**Costs**")
+        sales_rate_per_sqm = st.number_input("Sales Rate ($/sqm)", min_value=0, value=2800, step=50, format="%d")
+        construction_cost_per_gfa = st.number_input("Construction ($/sqm)", min_value=0, value=2500, step=50, format="%d")
+        demolition_cost = st.number_input("Demolition ($)", min_value=0, value=20000, step=1000, format="%d")
     with col4:
-        consultant_costs = st.number_input("Consultant & Approval Costs ($)", min_value=0, value=50000, step=1000)
-        marketing_costs = st.number_input("Marketing Costs ($)", min_value=0, value=15000, step=1000)
-        insurance_costs = st.number_input("Insurance Costs ($)", min_value=0, value=5000, step=500)
+        st.markdown("**Other Costs**")
+        consultant_costs = st.number_input("Consultants ($)", min_value=0, value=50000, step=1000, format="%d")
+        marketing_costs = st.number_input("Marketing ($)", min_value=0, value=15000, step=1000, format="%d")
+        insurance_costs = st.number_input("Insurance ($)", min_value=0, value=5000, step=500, format="%d")
 
 with st.expander("💰 Fees & Financial Settings"):
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        legal_fees = st.number_input("Legal Fees ($)", min_value=0, value=8000, step=1000)
-        statutory_fees = st.number_input("Statutory Fees ($)", min_value=0, value=5000, step=1000)
-        council_fees = st.number_input("Council Fees ($)", min_value=0, value=15000, step=1000)
+        st.markdown("**Legal Fees**")
+        legal_fees = st.number_input("Legal ($)", min_value=0, value=8000, step=1000, format="%d")
+        statutory_fees = st.number_input("Statutory ($)", min_value=0, value=5000, step=1000, format="%d")
+        council_fees = st.number_input("Council ($)", min_value=0, value=15000, step=1000, format="%d")
     with col2:
-        professional_fees = st.number_input("Professional Fees ($)", min_value=0, value=25000, step=1000)
-        solicitor_fees = st.number_input("Solicitor Fees ($)", min_value=0, value=3000, step=500)
-        utilities_connection = st.number_input("Utilities Connection ($)", min_value=0, value=8000, step=1000)
+        st.markdown("**Professional**")
+        professional_fees = st.number_input("Professional ($)", min_value=0, value=25000, step=1000, format="%d")
+        solicitor_fees = st.number_input("Solicitor ($)", min_value=0, value=3000, step=500, format="%d")
+        utilities_connection = st.number_input("Utilities ($)", min_value=0, value=8000, step=1000, format="%d")
     with col3:
-        agents_commission_rate = st.number_input("Agents Commission Rate (%)", min_value=0.0, value=2.5, step=0.1) / 100
-        stamp_duty_rate = st.number_input("Stamp Duty Rate (%)", min_value=0.0, value=5.5, step=0.1) / 100
-        gst_rate = st.number_input("GST Rate (%)", min_value=0.0, value=10.0, step=0.1) / 100
+        st.markdown("**Rates & Fees**")
+        agents_commission_rate = st.number_input("Agents %", min_value=0.0, value=2.5, step=0.1, format="%.1f") / 100
+        stamp_duty_rate = st.number_input("Stamp Duty %", min_value=0.0, value=5.5, step=0.1, format="%.1f") / 100
+        gst_rate = st.number_input("GST %", min_value=0.0, value=10.0, step=0.1, format="%.1f") / 100
     with col4:
-        target_profit_margin = st.number_input("Target Profit Margin (%)", min_value=0.0, value=20.0, step=1.0) / 100
-        minimum_roe = st.number_input("Minimum ROE Target (%)", min_value=0.0, value=15.0, step=1.0) / 100
-        interest_rate = st.number_input("Interest Rate (%)", min_value=0.0, value=6.5, step=0.1) / 100
-        development_period = st.number_input("Development Period (months)", min_value=1, value=18, step=1)
-        contingency_rate = st.number_input("Contingency Rate (%)", min_value=0.0, value=5.0, step=0.1) / 100
+        st.markdown("**Financial**")
+        target_profit_margin = st.number_input("Target Profit %", min_value=0.0, value=20.0, step=1.0, format="%.1f") / 100
+        minimum_roe = st.number_input("Min ROE %", min_value=0.0, value=15.0, step=1.0, format="%.1f") / 100
+        interest_rate = st.number_input("Interest %", min_value=0.0, value=6.5, step=0.1, format="%.1f") / 100
+        development_period = st.number_input("Dev Period (months)", min_value=1, value=18, step=1, format="%d")
+        contingency_rate = st.number_input("Contingency %", min_value=0.0, value=5.0, step=0.1, format="%.1f") / 100
 
 # Calculate derived metrics first
 gfa = site_size * fsr
