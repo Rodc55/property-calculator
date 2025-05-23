@@ -40,9 +40,10 @@ with st.expander("📍 Site & Development Details", expanded=True):
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.markdown("**Site Info**")
-        property_address = st.text_input("Address", value="123 Main Street, City, State", label_visibility="collapsed", placeholder="Property Address")
-        site_price = st.number_input("Site Price ($)", min_value=0, value=500000, step=10000, format="%d")
+        property_address = st.text_input("Property Address", value="123 Main Street, City, State")
         site_size = st.number_input("Site Size (sqm)", min_value=0, value=613, step=10, format="%d")
+        stamp_duty = st.number_input("Stamp Duty ($)", min_value=0, value=27500, step=1000, format="%d")
+        acquisition_costs = st.number_input("Acquisition Costs ($)", min_value=0, value=15000, step=1000, format="%d")
     with col2:
         st.markdown("**Development**")
         fsr = st.number_input("FSR", min_value=0.0, value=0.7, step=0.1, format="%.2f")
@@ -74,7 +75,7 @@ with st.expander("💰 Fees & Financial Settings"):
     with col3:
         st.markdown("**Rates & Fees**")
         agents_commission_rate = st.number_input("Agents %", min_value=0.0, value=2.5, step=0.1, format="%.1f") / 100
-        stamp_duty_rate = st.number_input("Stamp Duty %", min_value=0.0, value=5.5, step=0.1, format="%.1f") / 100
+        site_price = st.number_input("Site Price ($)", min_value=0, value=500000, step=10000, format="%d")
         gst_rate = st.number_input("GST %", min_value=0.0, value=10.0, step=0.1, format="%.1f") / 100
     with col4:
         st.markdown("**Financial**")
@@ -102,9 +103,8 @@ land_cost_per_gfa = site_price / gfa if gfa > 0 else 0
 agents_fees = expected_revenue * agents_commission_rate
 marketing_costs = expected_revenue * marketing_rate
 consultant_costs = expected_revenue * consultant_rate
-stamp_duty = site_price * stamp_duty_rate
 gst_on_sales = expected_revenue * gst_rate
-contingency_costs = (site_price + total_build_cost + construction_fees + demolition_cost + consultant_costs + marketing_costs) * contingency_rate
+contingency_costs = (site_price + total_build_cost + construction_fees + demolition_cost + consultant_costs + marketing_costs + acquisition_costs) * contingency_rate
 
 # Calculate land holding costs (interest on site purchase)
 land_holding_costs = site_price * interest_rate * (development_period / 12)
@@ -114,7 +114,7 @@ finance_cost = total_build_cost * interest_rate * (development_period / 24)
 
 # Total costs
 total_costs = (site_price + total_build_cost + construction_fees + demolition_cost + consultant_costs + 
-               marketing_costs + agents_fees + stamp_duty + gst_on_sales + 
+               marketing_costs + agents_fees + stamp_duty + acquisition_costs + gst_on_sales + 
                council_fees + statutory_fees + legal_fees + professional_fees +
                solicitor_fees + utilities_connection +
                land_holding_costs + finance_cost + contingency_costs)
@@ -169,6 +169,7 @@ all_metrics = [
     ('Marketing Costs', f"${marketing_costs:,.0f}"),
     ('Agents Fees', f"${agents_fees:,.0f}"),
     ('Stamp Duty', f"${stamp_duty:,.0f}"),
+    ('Acquisition Costs', f"${acquisition_costs:,.0f}"),
     ('GST on Sales', f"${gst_on_sales:,.0f}"),
     ('Council Fees', f"${council_fees:,.0f}"),
     ('Statutory Fees', f"${statutory_fees:,.0f}"),
@@ -230,11 +231,11 @@ st.header("💰 Cost Breakdown")
 # Create cost breakdown data
 cost_data = {
     'Item': ['Site Purchase', 'Construction Build', 'Construction Fees', 'Demolition', 'Consultants', 'Marketing', 
-             'Agents Fees', 'Stamp Duty', 'GST on Sales', 'Council Fees', 'Statutory Fees', 
+             'Agents Fees', 'Stamp Duty', 'Acquisition Costs', 'GST on Sales', 'Council Fees', 'Statutory Fees', 
              'Legal Fees', 'Professional Fees', 'Solicitor Fees', 'Utilities',
              'Land Holding', 'Finance Cost', 'Contingency'],
     'Cost': [site_price, total_build_cost, construction_fees, demolition_cost, consultant_costs, marketing_costs,
-             agents_fees, stamp_duty, gst_on_sales, council_fees, statutory_fees, legal_fees,
+             agents_fees, stamp_duty, acquisition_costs, gst_on_sales, council_fees, statutory_fees, legal_fees,
              professional_fees, solicitor_fees, utilities_connection,
              land_holding_costs, finance_cost, contingency_costs]
 }
