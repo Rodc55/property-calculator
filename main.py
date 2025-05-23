@@ -51,14 +51,16 @@ with st.expander("📍 Site & Development Details", expanded=True):
         nsa_ratio = st.number_input("NSA %", min_value=50.0, max_value=100.0, value=85.0, step=1.0, format="%.1f")
         num_dwellings = st.number_input("Dwellings", min_value=1, value=2, step=1, format="%d")
         sales_rate_per_sqm = st.number_input("Sales Rate ($/sqm)", min_value=0, value=2800, step=50, format="%d")
+        development_period = st.number_input("Dev Period (months)", min_value=1, value=18, step=1, format="%d")
     with col3:
         st.markdown("**Costs**")
         construction_cost_per_gfa = st.number_input("Construction ($/sqm)", min_value=0, value=2500, step=50, format="%d")
         contingency_rate = st.number_input("Contingency %", min_value=0.0, value=5.0, step=0.1, format="%.1f") / 100
+        consultant_rate = st.number_input("Consultants %", min_value=0.0, value=3.0, step=0.1, format="%.1f") / 100
+        agents_commission_rate = st.number_input("Agents %", min_value=0.0, value=2.5, step=0.1, format="%.1f") / 100
         demolition_cost = st.number_input("Demolition ($)", min_value=0, value=20000, step=1000, format="%d")
     with col4:
         st.markdown("**Other Costs**")
-        consultant_rate = st.number_input("Consultants %", min_value=0.0, value=3.0, step=0.1, format="%.1f") / 100
         marketing_rate = st.number_input("Marketing %", min_value=0.0, value=2.0, step=0.1, format="%.1f") / 100
 
 with st.expander("💰 Fees & Financial Settings"):
@@ -75,14 +77,12 @@ with st.expander("💰 Fees & Financial Settings"):
         utilities_connection = st.number_input("Utilities ($)", min_value=0, value=8000, step=1000, format="%d")
     with col3:
         st.markdown("**Rates & Fees**")
-        agents_commission_rate = st.number_input("Agents %", min_value=0.0, value=2.5, step=0.1, format="%.1f") / 100
         gst_rate = st.number_input("GST %", min_value=0.0, value=10.0, step=0.1, format="%.1f") / 100
     with col4:
         st.markdown("**Financial**")
         target_profit_margin = st.number_input("Target Profit %", min_value=0.0, value=20.0, step=1.0, format="%.1f") / 100
         minimum_roe = st.number_input("Min ROE %", min_value=0.0, value=15.0, step=1.0, format="%.1f") / 100
         interest_rate = st.number_input("Interest %", min_value=0.0, value=6.5, step=0.1, format="%.1f") / 100
-        development_period = st.number_input("Dev Period (months)", min_value=1, value=18, step=1, format="%d")
 
 # Calculate derived metrics first
 gfa = site_size * fsr
