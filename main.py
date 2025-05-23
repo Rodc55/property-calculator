@@ -57,11 +57,11 @@ with st.expander("📍 Site & Development Details", expanded=True):
         construction_cost_per_gfa = st.number_input("Construction ($/sqm)", min_value=0, value=2500, step=50, format="%d")
         contingency_rate = st.number_input("Contingency %", min_value=0.0, value=5.0, step=0.1, format="%.1f") / 100
         consultant_rate = st.number_input("Consultants %", min_value=0.0, value=3.0, step=0.1, format="%.1f") / 100
-        agents_commission_rate = st.number_input("Agents %", min_value=0.0, value=2.5, step=0.1, format="%.1f") / 100
         demolition_cost = st.number_input("Demolition ($)", min_value=0, value=20000, step=1000, format="%d")
     with col4:
-        st.markdown("**Other Costs**")
+        st.markdown("**Marketing Costs**")
         marketing_rate = st.number_input("Marketing %", min_value=0.0, value=2.0, step=0.1, format="%.1f") / 100
+        agents_commission_rate = st.number_input("Agents %", min_value=0.0, value=2.5, step=0.1, format="%.1f") / 100
 
 with st.expander("💰 Fees & Financial Settings"):
     col1, col2, col3, col4 = st.columns(4)
