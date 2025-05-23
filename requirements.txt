@@ -1,6 +1,5 @@
 streamlit
 pandas
-numpy
-numpy-financial
 plotly
+numpy-financial
 fpdf2
