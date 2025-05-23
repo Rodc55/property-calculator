@@ -56,7 +56,7 @@ with st.expander("📍 Site & Development Details", expanded=True):
         demolition_cost = st.number_input("Demolition ($)", min_value=0, value=20000, step=1000, format="%d")
     with col4:
         st.markdown("**Other Costs**")
-        consultant_costs = st.number_input("Consultants ($)", min_value=0, value=50000, step=1000, format="%d")
+        consultant_rate = st.number_input("Consultants %", min_value=0.0, value=3.0, step=0.1, format="%.1f") / 100
         marketing_rate = st.number_input("Marketing %", min_value=0.0, value=2.0, step=0.1, format="%.1f") / 100
 
 with st.expander("💰 Fees & Financial Settings"):
@@ -101,6 +101,7 @@ land_cost_per_gfa = site_price / gfa if gfa > 0 else 0
 # Calculate variable costs based on user inputs
 agents_fees = expected_revenue * agents_commission_rate
 marketing_costs = expected_revenue * marketing_rate
+consultant_costs = expected_revenue * consultant_rate
 stamp_duty = site_price * stamp_duty_rate
 gst_on_sales = expected_revenue * gst_rate
 contingency_costs = (site_price + total_build_cost + construction_fees + demolition_cost + consultant_costs + marketing_costs) * contingency_rate
@@ -162,7 +163,8 @@ all_metrics = [
     ('Construction Fees Rate', f"{construction_fees_rate*100:.1f}%"),
     ('Land Cost per GFA', f"${land_cost_per_gfa:,.0f}/sqm"),
     ('Demolition Cost', f"${demolition_cost:,.0f}"),
-    ('Consultant & Approval Costs', f"${consultant_costs:,.0f}"),
+    ('Consultant Rate', f"{consultant_rate*100:.1f}%"),
+    ('Consultant Costs', f"${consultant_costs:,.0f}"),
     ('Marketing Rate', f"{marketing_rate*100:.1f}%"),
     ('Marketing Costs', f"${marketing_costs:,.0f}"),
     ('Agents Fees', f"${agents_fees:,.0f}"),
