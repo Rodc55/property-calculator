@@ -41,6 +41,7 @@ with st.expander("📍 Site & Development Details", expanded=True):
     with col1:
         st.markdown("**Site Info**")
         property_address = st.text_input("Property Address", value="123 Main Street, City, State")
+        site_price = st.number_input("Purchase Price ($)", min_value=0, value=500000, step=10000, format="%d")
         site_size = st.number_input("Site Size (sqm)", min_value=0, value=613, step=10, format="%d")
         stamp_duty = st.number_input("Stamp Duty ($)", min_value=0, value=27500, step=1000, format="%d")
         acquisition_costs = st.number_input("Acquisition Costs ($)", min_value=0, value=15000, step=1000, format="%d")
@@ -75,7 +76,6 @@ with st.expander("💰 Fees & Financial Settings"):
     with col3:
         st.markdown("**Rates & Fees**")
         agents_commission_rate = st.number_input("Agents %", min_value=0.0, value=2.5, step=0.1, format="%.1f") / 100
-        site_price = st.number_input("Site Price ($)", min_value=0, value=500000, step=10000, format="%d")
         gst_rate = st.number_input("GST %", min_value=0.0, value=10.0, step=0.1, format="%.1f") / 100
     with col4:
         st.markdown("**Financial**")
@@ -330,3 +330,4 @@ if roe >= minimum_roe * 100:
     st.success(f"✅ ROE of {roe:.1f}% meets minimum target of {minimum_roe*100:.1f}%")
 else:
     st.warning(f"⚠️ ROE of {roe:.1f}% below minimum target of {minimum_roe*100:.1f}%")
+    
