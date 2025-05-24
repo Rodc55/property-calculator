@@ -6,6 +6,7 @@ import numpy_financial as npf
 from fpdf import FPDF
 import tempfile
 import os
+import math
 
 # Page configuration
 st.set_page_config(
@@ -43,7 +44,7 @@ with st.expander("📍 Site & Development Details", expanded=True):
         property_address = st.text_input("Property Address", value="123 Main Street, City, State")
         site_price = st.number_input("Purchase Price ($)", min_value=0, value=500000, step=10000, format="%d")
         site_size = st.number_input("Site Size (sqm)", min_value=0, value=613, step=10, format="%d")
-        stamp_duty = st.number_input("Stamp Duty ($)", min_value=0, value=27500, step=1000, format="%d")
+        # Stamp duty will be calculated automatically based on purchase price
         acquisition_costs = st.number_input("Acquisition Costs ($)", min_value=0, value=15000, step=1000, format="%d")
     with col2:
         st.markdown("**Development**")
@@ -83,6 +84,29 @@ with st.expander("💰 Fees & Financial Settings"):
         target_profit_margin = st.number_input("Target Profit %", min_value=0.0, value=20.0, step=1.0, format="%.1f") / 100
         minimum_roe = st.number_input("Min ROE %", min_value=0.0, value=15.0, step=1.0, format="%.1f") / 100
         interest_rate = st.number_input("Interest %", min_value=0.0, value=6.5, step=0.1, format="%.1f") / 100
+
+# Calculate stamp duty based on NSW formulas with CEILING function
+import math
+
+def calculate_stamp_duty(property_value):
+    """Calculate NSW stamp duty based on exact NSW formula with CEILING rounding"""
+    def ceiling_to_100(value):
+        return math.ceil(value / 100) * 100
+    
+    if property_value <= 17000:
+        return ceiling_to_100(property_value) * 0.0125
+    elif property_value <= 36000:
+        return 212 + ceiling_to_100(property_value - 17000) * 0.015
+    elif property_value <= 97000:
+        return 497 + ceiling_to_100(property_value - 36000) * 0.0175
+    elif property_value <= 364000:
+        return 1564 + ceiling_to_100(property_value - 97000) * 0.035
+    elif property_value <= 1212000:
+        return 10909 + ceiling_to_100(property_value - 364000) * 0.045
+    else:
+        return 49069 + ceiling_to_100(property_value - 1212000) * 0.055
+
+stamp_duty = calculate_stamp_duty(site_price)
 
 # Calculate derived metrics first
 gfa = site_size * fsr
