@@ -334,7 +334,7 @@ def create_pdf_report():
         pdf.set_font("Arial", "B", 10)
         pdf.cell(0, 6, value, 0, 1)
     
-    return pdf.output(dest='S')
+    return pdf.output(dest='S').encode('latin1')
 
 st.header("📄 Export Report")
 if st.button("Generate PDF Report"):
