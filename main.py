@@ -84,8 +84,6 @@ with st.expander("💰 Fees & Financial Settings"):
         st.markdown("**Rates & Fees**")
     with col4:
         st.markdown("**Financial**")
-        target_profit_margin = st.number_input("Target Profit %", min_value=0.0, value=20.0, step=1.0, format="%.1f") / 100
-        minimum_roe = st.number_input("Min ROE %", min_value=0.0, value=15.0, step=1.0, format="%.1f") / 100
         interest_rate = st.number_input("Interest %", min_value=0.0, value=6.5, step=0.1, format="%.1f") / 100
 
 # Calculate stamp duty based on NSW formulas with CEILING function
@@ -207,13 +205,13 @@ st.header("💰 Financial Analysis")
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.metric("Return on Equity", f"{roe:.1f}%", delta="Target: 15%")
+    st.metric("Return on Equity", f"{roe:.1f}%")
 
 with col2:
     st.metric("Internal Rate of Return", f"{irr:.1f}%")
 
 with col3:
-    st.metric("Profit Margin", f"{profit_margin:.1f}%", delta=f"Target: {target_profit_margin*100:.1f}%")
+    st.metric("Profit Margin", f"{profit_margin:.1f}%")
 
 with col4:
     st.metric("Development Period", f"{development_period} months")
@@ -361,12 +359,16 @@ elif roe > 10:
 else:
     st.warning(f"Low return on equity of {roe:.1f}%")
 
-if profit_margin >= target_profit_margin * 100:
-    st.success(f"✅ Profit margin of {profit_margin:.1f}% meets target of {target_profit_margin*100:.1f}%")
+if profit_margin >= 20:
+    st.success(f"✅ Excellent profit margin of {profit_margin:.1f}%")
+elif profit_margin >= 15:
+    st.info(f"Good profit margin of {profit_margin:.1f}%")
 else:
-    st.warning(f"⚠️ Profit margin of {profit_margin:.1f}% below target of {target_profit_margin*100:.1f}%")
+    st.warning(f"⚠️ Low profit margin of {profit_margin:.1f}%")
 
-if roe >= minimum_roe * 100:
-    st.success(f"✅ ROE of {roe:.1f}% meets minimum target of {minimum_roe*100:.1f}%")
+if roe >= 15:
+    st.success(f"✅ Excellent ROE of {roe:.1f}%")
+elif roe >= 10:
+    st.info(f"Good ROE of {roe:.1f}%")
 else:
-    st.warning(f"⚠️ ROE of {roe:.1f}% below minimum target of {minimum_roe*100:.1f}%")
+    st.warning(f"⚠️ Low ROE of {roe:.1f}%")
