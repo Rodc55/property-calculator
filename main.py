@@ -49,19 +49,20 @@ with st.expander("📍 Site & Development Details", expanded=True):
         site_size = st.number_input("Site Size (sqm)", min_value=0, value=613, step=10, format="%d")
         # Stamp duty will be calculated automatically based on purchase price
         acquisition_costs = st.number_input("Acquisition Costs ($)", min_value=0, value=15000, step=1000, format="%d")
+        gst_rate = st.number_input("GST %", min_value=0.0, value=10.0, step=0.1, format="%.1f") / 100
     with col2:
         st.markdown("**Development**")
         fsr = st.number_input("FSR", min_value=0.0, value=0.7, step=0.1, format="%.2f")
         nsa_ratio = st.number_input("NSA %", min_value=50.0, max_value=100.0, value=85.0, step=1.0, format="%.1f")
         num_dwellings = st.number_input("Dwellings", min_value=1, value=2, step=1, format="%d")
         sales_rate_per_sqm = st.number_input("Sales Rate ($/sqm)", min_value=0, value=2800, step=50, format="%d")
-        development_period = st.number_input("Dev Period (months)", min_value=1, value=18, step=1, format="%d")
     with col3:
         st.markdown("**Costs**")
         construction_cost_per_gfa = st.number_input("Construction ($/sqm)", min_value=0, value=2500, step=50, format="%d")
         contingency_rate = st.number_input("Contingency %", min_value=0.0, value=5.0, step=0.1, format="%.1f") / 100
         consultant_rate = st.number_input("Consultants %", min_value=0.0, value=3.0, step=0.1, format="%.1f") / 100
         demolition_cost = st.number_input("Demolition ($)", min_value=0, value=20000, step=1000, format="%d")
+        development_period = st.number_input("Dev Period (months)", min_value=1, value=18, step=1, format="%d")
     with col4:
         st.markdown("**Marketing Costs**")
         marketing_rate = st.number_input("Marketing %", min_value=0.0, value=2.0, step=0.1, format="%.1f") / 100
@@ -81,7 +82,6 @@ with st.expander("💰 Fees & Financial Settings"):
         cdc_fees = st.number_input("CDC Fees ($)", min_value=0, value=8000, step=1000, format="%d")
     with col3:
         st.markdown("**Rates & Fees**")
-        gst_rate = st.number_input("GST %", min_value=0.0, value=10.0, step=0.1, format="%.1f") / 100
     with col4:
         st.markdown("**Financial**")
         target_profit_margin = st.number_input("Target Profit %", min_value=0.0, value=20.0, step=1.0, format="%.1f") / 100
